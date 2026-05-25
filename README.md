@@ -174,6 +174,7 @@ const FIREBASE_CONFIG = {
 ## 📜 Credits & License
 
 * **Lead Developers:** BRIGHTZ-SEC
+* **Thanks To:** 
 * **Concept Inspiration:** Classic Hudson Soft's Bomberman series combined with active Indonesian academic curricula.
 * **License:** Distributed under the MIT License. See `LICENSE` for more details.
 
