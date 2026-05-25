@@ -116,7 +116,7 @@ Since BOMSKUY is a standard HTML5/JS project, it requires **no installation** or
 ### Quick Start
 1. Clone the repository to your local machine:
    ```bash
-   git clone https://github.com/yourusername/bomskuy.git
+   git clone https://github.com/BRIGHTZ-SEC/Bomskuy-Online.git
    ```
 2. Navigate to the project directory:
    ```bash
