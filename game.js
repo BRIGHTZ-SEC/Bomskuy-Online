@@ -359,13 +359,13 @@ let roomRef = null;
 let fbListeners = [];
 
 const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyB2CC4PWoKpPsSlNQIXmYnxe4fmRh_dQT4",
-  authDomain: "bomskuy-online.firebaseapp.com",
-  databaseURL: "https://bomskuy-online-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "bomskuy-online",
-  storageBucket: "bomskuy-online.firebasestorage.app",
-  messagingSenderId: "468195869653",
-  appId: "1:468195869653:web:4120e6615a1d9f46b1b35c"
+  apiKey: "yourapikey",
+  authDomain: "yourauthdomain",
+  databaseURL: "yourdatabaseurl",
+  projectId: "yourprojectid",
+  storageBucket: "yourstoragebucket",
+  messagingSenderId: "yourmessagingsenderid",
+  appId: "yourappid"
 };
 
 const ICE_SERVERS = {
@@ -385,7 +385,7 @@ async function getIceServersConfig() {
   }
   try {
     console.log("Fetching TURN servers from Metered...");
-    const response = await fetch("https://bomskuyjaya.metered.live/api/v1/turn/credentials?apiKey=03efbbd5d915adbbfae28df0d4b230fe8df6");
+    const response = await fetch("https://yourdomain.metered.live/api/v1/turn/credentials?apiKey=yourapikey");
     if (!response.ok) {
       throw new Error(`Failed to fetch TURN credentials: ${response.statusText}`);
     }
