@@ -169,32 +169,11 @@ const FIREBASE_CONFIG = {
 };
 ```
 
-```javascript
-async function getIceServersConfig() {
-  if (fetchedIceServers) {
-    return { iceServers: fetchedIceServers };
-  }
-  try {
-    console.log("Fetching TURN servers from Metered...");
-    const response = await fetch("your turn servers here");
-    if (!response.ok) {
-      throw new Error(`Failed to fetch TURN credentials: ${response.statusText}`);
-    }
-    const servers = await response.json();
-    fetchedIceServers = servers;
-    console.log("TURN servers fetched successfully:", servers);
-    return { iceServers: servers };
-  } catch (err) {
-    console.error("Failed to fetch TURN servers, using fallback Google STUN:", err);
-    return ICE_SERVERS;
-  }
-}
-```
 ---
 
 ## 📜 Credits & License
 
-* **Lead Developers:** BRIGHTZ-SEC
+* **Lead Developers:** Kelompok 1
 * **Concept Inspiration:** Classic Hudson Soft's Bomberman series combined with active Indonesian academic curricula.
 * **License:** Distributed under the MIT License. See `LICENSE` for more details.
 

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,user-scalable=no"/>
+  <title>BOMSKUY 💣 — Tactical Combat Edukasi</title>
+  <meta name="description" content="BOMSKUY - Game edukasi bergaya AAA War Combat. Hancurkan musuh, jawab soal Sejarah, PKN & Agama Islam!"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Rajdhani:wght@400;500;600;700&family=Teko:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&family=Press+Start+2P&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="game.css"/>
+  <style>
+    
+    #modal-player-name::placeholder {
+      color: var(--dim);
+      font-weight: 300;
+      letter-spacing: 0.15em;
+    }
+    #modal-player-name:focus {
+      border-color: rgba(255, 106, 0, 0.4) !important;
+      background: rgba(0, 0, 0, 0.7) !important;
+      box-shadow: 0 0 20px rgba(255, 106, 0, 0.15);
+    }
+    #join-room-input::placeholder {
+      color: var(--dim);
+      font-weight: 300;
+      letter-spacing: 0.1em;
+    }
+    #join-room-input:focus {
+      border-color: rgba(255, 106, 0, 0.4) !important;
+      background: rgba(0, 0, 0, 0.7) !important;
+      box-shadow: 0 0 20px rgba(255, 106, 0, 0.15);
+    }
+    .tutor-img-holder {
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .tutor-img-holder:hover {
+      border-color: var(--acc) !important;
+      box-shadow: 0 0 20px rgba(255, 106, 0, 0.25) !important;
+    }
+  </style>
+</head>
+<body>
+
+
+<div id="screen-loading-init" class="screen active" style="z-index: 1000; background: #050508;">
+  <div class="loading-logo-wrap">
+    <div class="logo-bomb">💣</div>
+    <h1 class="logo-title">BOMSKUY</h1>
+  </div>
+  <div class="loading-spinner"></div>
+  <div class="loading-text">INITIALIZING COMBAT SYSTEMS...</div>
+</div>
+
+
+<div id="screen-loading-transition" class="screen" style="z-index: 1000; background: #050508;">
+  <div class="loading-logo-wrap">
+    <h1 class="logo-title">BOMSKUY</h1>
+  </div>
+  <div class="loading-bar-container">
+    <div class="loading-bar-fill" id="transition-bar-fill"></div>
+  </div>
+  <div class="loading-text">DEPLOYING TO COMBAT ZONE...</div>
+</div>
+
+
+<div id="screen-welcome" class="screen">
+ 
+  <div id="menu-bg-wrap" class="menu-bg-wrap bg-theme-all">
+    <div class="welcome-bg-overlay"></div>
+    <div class="deco d1">🔥</div><div class="deco d2">💥</div>
+    <div class="deco d3">🔥</div><div class="deco d4">✦</div>
+    <div class="deco" style="top:35%;left:25%;animation-delay:3s;font-size:.4rem;opacity:.15">💣</div>
+    <div class="deco" style="top:10%;right:30%;animation-delay:4s;font-size:.35rem;opacity:.2">⚡</div>
+    <div class="deco" style="bottom:20%;left:40%;animation-delay:2.5s;font-size:.45rem;opacity:.18">🔥</div>
+    <div class="deco" style="top:45%;right:8%;animation-delay:1s;font-size:.3rem;opacity:.22">✦</div>
+  </div>
+  
+  <div class="welcome-card aaa-style">
+    <div class="logo-wrap">
+      <img src="logo_bomskuy.png" alt="BOMSKUY Logo" style="width: 90px; height: 90px; object-fit: contain; margin-bottom: 6px; filter: drop-shadow(0 0 24px rgba(255,106,0,0.7)); display: block; margin-left: auto; margin-right: auto;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+      <div class="logo-bomb" style="display:none;">💣</div>
+      <h1 class="logo-title">BOMSKUY</h1>
+      <p class="logo-sub">Destroy · Answer · Conquer</p>
+      <span class="logo-edu-badge" id="menu-edu-badge">🎓 SEJARAH · PKN · AGAMA ISLAM</span>
+    </div>
+
+ 
+    <div class="aaa-nav-menu">
+      <button id="btn-menu-multiplayer" class="btn-aaa-primary" onclick="openCallsignModal('multi')">⚔️ MULTIPLAYER (ONLINE)</button>
+      <button id="btn-menu-singleplayer" class="btn-aaa-primary" onclick="openCallsignModal('single')" style="background: linear-gradient(135deg, #39ff14, #20a060); box-shadow: 0 4px 20px rgba(57, 255, 20, 0.25);">🕹️ SINGLEPLAYER (OFFLINE)</button>
+      <div class="aaa-nav-row">
+        <button class="btn-aaa-secondary" onclick="openTutorial()">📋 PANDUAN</button>
+        <button class="btn-aaa-secondary" onclick="openSettings()">⚙ PENGATURAN</button>
+      </div>
+      <button class="btn-aaa-secondary btn-lb-aaa" onclick="openLeaderboard()">🎖 PERINGKAT</button>
+    </div>
+
+     
+    <div id="profile-stats" style="display:none"></div>
+  </div>
+</div>
+
+ 
+<div id="screen-tutorial" class="settings-backdrop" style="display:none;" onclick="closeTutorialOutside(event)">
+  <div class="settings-card tutorial-card" style="width: min(560px, 94vw);">
+    <div class="settings-header">
+      <span>📋</span>
+      <h2 class="settings-title">MISSION BRIEFING</h2>
+      <button class="lb-close" onclick="closeTutorial()">✕</button>
+    </div>
+    
+     
+    <div class="lb-tabs" style="display:flex; justify-content:space-around; border-bottom:1px solid rgba(255,180,60,0.12); background:rgba(0,0,0,0.2);">
+      <button class="lb-tab active" id="tutor-tab-hp" onclick="switchTutorTab('hp')" style="flex:1; border-radius:0; border:none; padding:12px; font-family:var(--ft); font-size:0.9rem; letter-spacing:1px; text-transform:uppercase;">📱 KONTROL HP</button>
+      <button class="lb-tab" id="tutor-tab-pc" onclick="switchTutorTab('pc')" style="flex:1; border-radius:0; border:none; padding:12px; font-family:var(--ft); font-size:0.9rem; letter-spacing:1px; text-transform:uppercase;">💻 KONTROL PC</button>
+      <button class="lb-tab" id="tutor-tab-multi" onclick="switchTutorTab('multi')" style="flex:1; border-radius:0; border:none; padding:12px; font-family:var(--ft); font-size:0.9rem; letter-spacing:1px; text-transform:uppercase;">🌐 MULTIPLAYER</button>
+    </div>
+    
+    <div class="settings-body tutorial-body" style="padding:15px; display:flex; flex-direction:column; align-items:center; gap:12px; overflow-y:auto; max-height: 65vh;">
+       
+      <div class="tutor-img-holder" style="width:100%; max-height:220px; border-radius:12px; border:2px solid rgba(255,180,60,0.15); background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.4);">
+        <img id="tutor-img" src="tutor_controlhp.png" alt="Panduan Visual" style="max-width:100%; max-height:100%; object-fit:contain; image-rendering:pixelated; border-radius:10px; transition:opacity 0.25s ease;" />
+      </div>
+      
+       
+      <div id="tutor-desc-box" style="width:100%; background:rgba(0,0,0,0.2); border:1px solid rgba(255,180,60,0.06); border-radius:10px; padding:12px 16px; font-family:var(--fh); line-height:1.5;">
+        <p id="tutor-desc" style="font-size:0.82rem; color:var(--text-war);"></p>
+      </div>
+    </div>
+    <button class="btn-primary" style="margin:0 24px 20px; width:calc(100% - 48px)" onclick="closeTutorial()">DISMISS BRIEFING</button>
+  </div>
+</div>
+
+ 
+<div id="settings-modal" class="settings-backdrop" style="display:none;" onclick="closeSettingsOutside(event)">
+  <div class="settings-card">
+    <div class="settings-header">
+      <span>⚙️</span>
+      <h2 class="settings-title">COMMAND CENTER</h2>
+      <button class="lb-close" onclick="closeSettings()">✕</button>
+    </div>
+    <div class="settings-body">
+      <div class="settings-section">
+        <div class="settings-label">⚔ Combat Difficulty</div>
+        <div class="settings-options" id="diff-options">
+          <button class="sopt-btn" data-val="easy" onclick="setDifficulty('easy',this)">🟢 RECRUIT</button>
+          <button class="sopt-btn active" data-val="normal" onclick="setDifficulty('normal',this)">🟡 VETERAN</button>
+          <button class="sopt-btn" data-val="hard" onclick="setDifficulty('hard',this)">🔴 ELITE</button>
+        </div>
+        <div class="settings-desc" id="diff-desc">Standard enemy movement speed</div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-label">📍 Total Operations</div>
+        <div class="settings-options" id="maxlevel-options">
+          <button class="sopt-btn" data-val="3" onclick="setMaxLevel(3,this)">3 OPS</button>
+          <button class="sopt-btn active" data-val="5" onclick="setMaxLevel(5,this)">5 OPS</button>
+          <button class="sopt-btn" data-val="7" onclick="setMaxLevel(7,this)">7 OPS</button>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-label">🎨 Theater of Operations</div>
+        <div class="settings-options theme-options-grid" id="theme-options">
+          <button class="sopt-btn theme-btn theme-all active" data-val="all" onclick="setTheme('all',this)">🎓 All Theaters</button>
+          <button class="sopt-btn theme-btn theme-sejarah" data-val="sejarah" onclick="setTheme('sejarah',this)">🏛️ Sejarah</button>
+          <button class="sopt-btn theme-btn theme-pkn" data-val="pkn" onclick="setTheme('pkn',this)">⚖️ PKN</button>
+          <button class="sopt-btn theme-btn theme-agama" data-val="agama" onclick="setTheme('agama',this)">☪️ Agama</button>
+        </div>
+        <div class="settings-desc theme-desc-box" id="theme-desc">🎓 Sejarah · PKN · Agama Islam</div>
+      </div>
+    </div>
+    <button class="btn-primary" style="margin:0 24px 24px;width:calc(100% - 48px)" onclick="closeSettings()">✅ CONFIRM & DEPLOY</button>
+  </div>
+</div>
+
+ 
+<div id="leaderboard-modal" class="lb-backdrop" style="display: none;" onclick="closeLbOutside(event)">
+  <div class="lb-card">
+    <div class="lb-header">
+      <span class="lb-icon">🎖</span>
+      <h2 class="lb-title">MILITARY RANKINGS</h2>
+      <button class="lb-close" onclick="closeLeaderboard()">✕</button>
+    </div>
+    <div class="lb-tabs">
+      <button class="lb-tab active" onclick="switchLbTab('all', this)">SEMUA</button>
+      <button class="lb-tab" onclick="switchLbTab('win', this)">MENANG</button>
+      <button class="lb-tab" onclick="switchLbTab('lose', this)">KALAH</button>
+    </div>
+    <div id="lb-list" class="lb-list"></div>
+    <div style="padding: 14px 18px; border-top: 1px solid rgba(255, 180, 60, 0.08); display: flex; justify-content: space-between; gap: 10px; flex-shrink: 0; background: rgba(0,0,0,0.2); border-radius: 0 0 20px 20px;">
+      <button class="btn-secondary" style="font-size: 0.65rem; padding: 6px 12px; margin: 0; min-height: unset; height: 32px;" onclick="clearLeaderboard()">🗑️ BERSIHKAN</button>
+      <button class="btn-primary" style="font-size: 0.65rem; padding: 6px 16px; margin: 0; min-height: unset; height: 32px;" onclick="closeLeaderboard()">TUTUP</button>
+    </div>
+  </div>
+</div>
+
+ 
+<div id="modal-callsign" class="settings-backdrop" style="display: none;" onclick="if(event.target.id==='modal-callsign') closeCallsignModal()">
+  <div class="settings-card">
+    <div class="settings-header">
+      <span>⚔️</span>
+      <h2 class="settings-title">IDENTITAS OPERATIF</h2>
+      <button class="lb-close" onclick="closeCallsignModal()">✕</button>
+    </div>
+    <div class="settings-body" style="padding: 20px 22px;">
+      <div class="settings-section">
+        <div class="settings-label">PANGGILAN / CALLSIGN</div>
+        <input type="text" id="modal-player-name" placeholder="Masukkan nama callsign..." maxlength="12" autocomplete="off" style="width:100%; padding:14px; background:rgba(0,0,0,0.4); border:1px solid var(--border); border-radius:12px; color:var(--text); font-family:var(--ft); text-align:center; font-size:1.1rem; margin-top:8px; outline:none; transition:all 0.3s;"/>
+      </div>
+    </div>
+    <div style="padding: 0 22px 22px; display:flex; gap:10px;">
+      <button class="btn-primary" style="flex:1" onclick="confirmCallsign()">CONFIRM CALLSIGN</button>
+    </div>
+  </div>
+</div>
+
+ 
+<div id="modal-lobby" class="settings-backdrop" style="display: none;">
+  <div class="settings-card lobby-card" style="width: min(480px, 94vw);">
+    <div class="settings-header">
+      <span>📡</span>
+      <h2 class="settings-title" id="lobby-title">LOBI MULTIPLAYER</h2>
+      <button class="lb-close" onclick="closeLobbyModal()">✕</button>
+    </div>
+    
+     
+    <div class="settings-body" id="lobby-step-select" style="gap:20px; padding: 22px;">
+      <div class="settings-section" style="text-align:center;">
+        <p style="font-size:0.85rem; color:var(--dim); font-family:var(--fh); line-height:1.4;">Pilih opsi penugasan pertempuran WebRTC P2P kamu.</p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:12px; width: 100%;">
+        <button class="btn-aaa-primary" style="padding:16px; font-size:0.95rem;" onclick="lobbySelectRole('host')">🧱 BUAT MATCH (HOST)</button>
+        <button class="btn-aaa-secondary" style="padding:14px; font-size:0.85rem;" onclick="lobbySelectRole('join')">⚡ GABUNG MATCH (JOIN)</button>
+      </div>
+    </div>
+    
+     
+    <div class="settings-body" id="lobby-step-host-setup" style="display:none; gap:14px; padding: 18px; max-height:65vh; overflow-y:auto;">
+      <div class="settings-section">
+        <div class="settings-label">🎨 Theater / Tema Map</div>
+        <div class="settings-options theme-options-grid" id="lobby-theme-options" style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+          <button class="sopt-btn theme-btn active" data-val="all" onclick="setLobbyTheme('all',this)">🎓 Semua Mapel</button>
+          <button class="sopt-btn theme-btn" data-val="sejarah" onclick="setLobbyTheme('sejarah',this)">🏛️ Sejarah</button>
+          <button class="sopt-btn theme-btn" data-val="pkn" onclick="setLobbyTheme('pkn',this)">⚖️ PKN</button>
+          <button class="sopt-btn theme-btn" data-val="agama" onclick="setLobbyTheme('agama',this)">☪️ Agama</button>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-label">⚔️ Kesulitan / Difficulty</div>
+        <div class="settings-options" id="lobby-diff-options" style="display:flex; gap:6px;">
+          <button class="sopt-btn" data-val="easy" onclick="setLobbyDifficulty('easy',this)">🟢 RECRUIT</button>
+          <button class="sopt-btn active" data-val="normal" onclick="setLobbyDifficulty('normal',this)">🟡 VETERAN</button>
+          <button class="sopt-btn" data-val="hard" onclick="setLobbyDifficulty('hard',this)">🔴 ELITE</button>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-label">📍 Total Operasi / Rounds</div>
+        <div class="settings-options" id="lobby-maxlevel-options" style="display:flex; gap:6px;">
+          <button class="sopt-btn" data-val="3" onclick="setLobbyMaxLevel(3,this)">3 OPS</button>
+          <button class="sopt-btn active" data-val="5" onclick="setLobbyMaxLevel(5,this)">5 OPS</button>
+          <button class="sopt-btn" data-val="7" onclick="setLobbyMaxLevel(7,this)">7 OPS</button>
+        </div>
+      </div>
+      <button class="btn-aaa-primary" style="padding:14px; font-size:0.9rem; margin-top:8px; width:100%;" onclick="confirmHostSetup()">⚔️ BUAT PERTEMPURAN</button>
+    </div>
+    
+     
+    <div class="settings-body" id="lobby-step-host" style="display:none; gap:16px; padding: 22px;">
+      <div class="settings-section" style="text-align:center;">
+        <div class="settings-label">KODE ROOM PERTEMPURAN</div>
+        <div id="host-room-id" style="font-family:var(--fm); font-size:1.8rem; color:var(--acc2); margin:12px 0; text-shadow:var(--gY); letter-spacing:4px;">MEMBUAT...</div>
+        <button class="btn-secondary" style="font-size:0.7rem; padding:6px 12px; margin:auto;" onclick="copyRoomCode()">📋 SALIN KODE</button>
+      </div>
+      <div class="settings-section" style="text-align:center; border-top:1px solid rgba(255,180,60,0.1); padding-top:16px;">
+        <div class="loading-spinner" style="margin: 0 auto 10px; width:30px; height:30px; border-width:2px;"></div>
+        <div id="host-status" style="font-size:0.75rem; color:var(--dim); text-transform:uppercase; letter-spacing:1px;">Menghubungkan ke server signaling...</div>
+      </div>
+    </div>
+    
+     
+    <div class="settings-body" id="lobby-step-join" style="display:none; gap:16px; padding: 22px;">
+      <div class="settings-section">
+        <div class="settings-label">MASUKKAN KODE ROOM HOST</div>
+        <input type="text" id="join-room-input" placeholder="Contoh: BOM-5812" style="width:100%; padding:14px; background:rgba(0,0,0,0.4); border:1px solid var(--border); border-radius:12px; color:var(--text); font-family:var(--ft); text-align:center; font-size:1.4rem; margin-top:8px; text-transform:uppercase; outline:none; letter-spacing:2px; transition:all 0.3s;"/>
+      </div>
+      <div class="settings-section" style="text-align:center;">
+        <div id="join-status" style="font-size:0.75rem; color:var(--dim); text-transform:uppercase; letter-spacing:1px; min-height: 20px;">Masukkan kode dan klik Hubungkan</div>
+      </div>
+      <button class="btn-aaa-primary" id="btn-connect-join" style="padding:14px; font-size:0.9rem;" onclick="lobbyConnectAsGuest()">⚔️ HUBUNGKAN & DEPLOY</button>
+    </div>
+    
+    <div style="padding:0 22px 22px; display:flex; gap:10px;" id="lobby-footer">
+      <button class="btn-secondary" style="flex:1" onclick="backLobbyStep()">KEMBALI</button>
+    </div>
+  </div>
+</div>
+
+ 
+<div id="quiz-modal" class="quiz-backdrop">
+  <div class="quiz-card">
+    <div id="quiz-subject" class="quiz-subject-badge">📚 SEJARAH</div>
+    <div id="quiz-question" class="quiz-question">...</div>
+    <div class="quiz-countdown-wrap">
+      <canvas id="quiz-ring" class="quiz-countdown-ring" width="36" height="36"></canvas>
+      <div class="quiz-bar-wrap">
+        <div id="quiz-bar-fill" class="quiz-bar-fill" style="width:100%;background:var(--green)"></div>
+      </div>
+      <span id="quiz-count-txt" class="quiz-count-txt">10</span>
+    </div>
+    <div id="quiz-options" class="quiz-options"></div>
+    <div id="quiz-result" class="quiz-result"></div>
+  </div>
+</div>
+
+ 
+<div id="screen-game" class="screen">
+  <div class="game-header">
+    <div class="hud-item">
+      <span class="hud-label">CALLSIGN</span>
+      <span id="hud-name" class="hud-value" style="font-size:.52rem;max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">---</span>
+    </div>
+    <div class="hud-sep"></div>
+    <div class="hud-item">
+      <span class="hud-label">OPERATION</span>
+      <span id="hud-level" class="hud-value hud-level-glow">1</span>
+    </div>
+    <div class="hud-item hud-theme-item">
+      <span id="hud-theme-badge" class="hud-theme-badge">🎓</span>
+    </div>
+    <div class="hud-item">
+      <span class="hud-label">HP</span>
+      <span id="hud-lives" class="hud-value lives-disp">❤️❤️❤️</span>
+    </div>
+    <div class="hud-item">
+      <span class="hud-label">SCORE</span>
+      <span id="hud-score" class="hud-value">0</span>
+    </div>
+    <div class="hud-item">
+      <span class="hud-label">HOSTILES</span>
+      <span id="hud-enemies" class="hud-value">4</span>
+    </div>
+    <div class="hud-item">
+      <span class="hud-label">ELAPSED</span>
+      <span id="hud-timer" class="hud-value">00:00</span>
+    </div>
+    <div class="hud-item">
+      <span class="hud-label">ORDNANCE</span>
+      <span id="hud-bombs" class="hud-value">2/2</span>
+    </div>
+    <div class="hud-sep"></div>
+    <div class="pu-status">
+      <div id="badge-speed" class="pu-badge speed" title="Speed Boost aktif">
+        <div class="pu-badge-row">⚡ <span id="speed-txt">--</span>s</div>
+        <div class="pu-timer-bar"><div id="speed-bar" class="pu-timer-fill" style="width:0%"></div></div>
+      </div>
+      <div id="badge-blast" class="pu-badge blast" title="Level ledakan">🔥 Lv<span id="blast-txt">1</span></div>
+      <div id="badge-bomb" class="pu-badge bomb" title="Kapasitas bom">💣 <span id="bomb-cap-txt">2</span></div>
+      <div id="badge-shield" class="pu-badge shield-badge" title="Tameng aktif">🛡️ ON</div>
+    </div>
+    <button class="hud-pause-btn" onclick="togglePause()" title="Pause (ESC / P)">⏸</button>
+  </div>
+  <div class="game-area">
+    <canvas id="game-canvas"></canvas>
+  </div>
+  <div class="game-footer">
+    ⚔ ELIMINATE ALL HOSTILES! &nbsp;|&nbsp; <kbd>ESC</kbd>/<kbd>P</kbd> Tactical Pause
+    &nbsp;|&nbsp; Destroy Cover → Intel &nbsp;|&nbsp; 📚 +200 &nbsp;|&nbsp; 💀 Combo Kill!
+  </div>
+   
+  <div id="dpad">
+     
+    <div id="joystick-container">
+      <canvas id="joystick-canvas" width="140" height="140"></canvas>
+    </div>
+     
+    <div id="dpad-right-panel">
+      <button id="dpad-bomb" class="dpad-btn dpad-bomb-btn" aria-label="Bom">
+        <span class="bomb-icon-wrap">💣</span>
+        <span class="bomb-label">BOM</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+ 
+<div id="screen-gameover" class="screen">
+  <div class="result-card gameover-card">
+    <div class="result-icon">💀</div>
+    <h2 class="result-title">KILLED IN ACTION</h2>
+    <p id="go-name" class="result-player"></p>
+    <div class="result-stats">
+      <div class="stat-row"><span>Operation Reached</span><strong id="go-level">1</strong></div>
+      <div class="stat-row"><span>Final Score</span><strong id="go-score">0</strong></div>
+      <div class="stat-row"><span>Time Elapsed</span><strong id="go-time">00:00</strong></div>
+      <div class="stat-row"><span>Hostiles Eliminated</span><strong id="go-kills">0</strong></div>
+      <div class="stat-row"><span>Intel Correct</span><strong id="go-quiz">0</strong></div>
+    </div>
+    <div class="result-btns">
+      <button class="btn-primary" onclick="showScreen('screen-welcome')">🏠 HQ</button>
+      <button class="btn-secondary" onclick="restartGame()">🔄 REDEPLOY</button>
+    </div>
+  </div>
+</div>
+
+ 
+<div id="screen-win" class="screen">
+  <div class="win-confetti" id="confetti-container"></div>
+  <div class="result-card win-card">
+    <div class="result-icon">🎖</div>
+    <h2 class="result-title win-title">MISSION COMPLETE</h2>
+    <p id="win-name" class="result-player"></p>
+    <div class="result-stats">
+      <div class="stat-row"><span>Final Score</span><strong id="win-score">0</strong></div>
+      <div class="stat-row"><span>Time Elapsed</span><strong id="win-time">00:00</strong></div>
+      <div class="stat-row"><span>Hostiles Eliminated</span><strong id="win-kills">0</strong></div>
+      <div class="stat-row"><span>Intel Correct</span><strong id="win-quiz">0</strong></div>
+    </div>
+    <div class="lb-inline-wrap">
+      <div class="lb-inline-title">🎖 TOP 5 OPERATIVES</div>
+      <div id="lb-inline-list" class="lb-inline-list"></div>
+    </div>
+    <div class="result-btns" style="margin-top:18px">
+      <button class="btn-primary" onclick="showScreen('screen-welcome')">🏠 HQ</button>
+      <button class="btn-secondary" onclick="restartGame()">🔄 REDEPLOY</button>
+    </div>
+    <button class="btn-lb-inline" onclick="openLeaderboard()">📋 FULL RANKINGS</button>
+  </div>
+</div>
+
+ 
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
