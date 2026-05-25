@@ -169,7 +169,27 @@ const FIREBASE_CONFIG = {
 };
 ```
 
-
+```javascript
+async function getIceServersConfig() {
+  if (fetchedIceServers) {
+    return { iceServers: fetchedIceServers };
+  }
+  try {
+    console.log("Fetching TURN servers from Metered...");
+    const response = await fetch("your turn servers here");
+    if (!response.ok) {
+      throw new Error(`Failed to fetch TURN credentials: ${response.statusText}`);
+    }
+    const servers = await response.json();
+    fetchedIceServers = servers;
+    console.log("TURN servers fetched successfully:", servers);
+    return { iceServers: servers };
+  } catch (err) {
+    console.error("Failed to fetch TURN servers, using fallback Google STUN:", err);
+    return ICE_SERVERS;
+  }
+}
+```
 ---
 
 ## 📜 Credits & License
