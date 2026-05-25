@@ -1,5 +1,6 @@
 'use strict';
 // BOMSKUY BY BRIGHTZ-SEC
+console.log("💣 BOMSKUY Combat System Loaded. Please dont hek");
 
 // ─── SPRITE ASSETS PRELOADING ────────────────
 const spriteAssets = {
@@ -358,13 +359,13 @@ let roomRef = null;
 let fbListeners = [];
 
 const FIREBASE_CONFIG = {
-  apiKey: "yourapikey",
-  authDomain: "yourauthdomain",
-  databaseURL: "yourdatabaseURL",
-  projectId: "yourprojectid",
-  storageBucket: "yourstoragebucket",
-  messagingSenderId: "yourmessagingSenderId",
-  appId: "yourappid",
+  apiKey: "AIzaSyB2CC4PWoKpPsSlNQIXmYnxe4fmRh_dQT4",
+  authDomain: "bomskuy-online.firebaseapp.com",
+  databaseURL: "https://bomskuy-online-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "bomskuy-online",
+  storageBucket: "bomskuy-online.firebasestorage.app",
+  messagingSenderId: "468195869653",
+  appId: "1:468195869653:web:4120e6615a1d9f46b1b35c"
 };
 
 const ICE_SERVERS = {
@@ -384,7 +385,7 @@ async function getIceServersConfig() {
   }
   try {
     console.log("Fetching TURN servers from Metered...");
-    const response = await fetch("your turn servers here");
+    const response = await fetch("https://bomskuyjaya.metered.live/api/v1/turn/credentials?apiKey=03efbbd5d915adbbfae28df0d4b230fe8df6");
     if (!response.ok) {
       throw new Error(`Failed to fetch TURN credentials: ${response.statusText}`);
     }
@@ -1206,11 +1207,18 @@ function updateHUD() {
     lastHudState.bombCap = bombCapVal;
   }
 
-  // Shield badge — BUG FIX: sembunyikan karena belum terimplementasi
-  if (!lastHudState.shieldHidden) {
+  // Shield badge
+  const shieldActiveVal = pl.invincible;
+  if (lastHudState.shieldActive !== shieldActiveVal) {
     const shieldBadge = document.getElementById('badge-shield');
-    if (shieldBadge) shieldBadge.style.display = 'none';
-    lastHudState.shieldHidden = true;
+    if (shieldBadge) {
+      if (shieldActiveVal) {
+        shieldBadge.classList.add('active');
+      } else {
+        shieldBadge.classList.remove('active');
+      }
+    }
+    lastHudState.shieldActive = shieldActiveVal;
   }
 }
 
@@ -1320,8 +1328,13 @@ function collectPowerup(r, c) {
     showPopup('🛡️ SHIELD ON!', c, r, '#00c8ff'); SoundEngine.playPickup();
   } else if (pu.type === PU_FREEZE) {
     st.freezeActive = true; st.freezeUntil = Date.now() + FREEZE_DUR;
+    console.log("❄️ [FREEZE ACTIVATED] st.freezeActive set to true locally! Until:", st.freezeUntil);
     st.score += scoreAdd;
     showPopup('❄️ FREEZE!', c, r, '#64d8ff'); SoundEngine.playPickup();
+    if (isMultiplayer && activeConn && activeConn.open) {
+      activeConn.send({ type: 'FREEZE_ACTIVE', duration: FREEZE_DUR });
+      console.log("❄️ [MULTI-SYNC] Sent FREEZE_ACTIVE packet to opponent!");
+    }
   } else if (pu.type === PU_MAGNET) {
     st.magnetActive = true; st.magnetUntil = Date.now() + MAGNET_DUR;
     st.score += scoreAdd;
@@ -1583,6 +1596,10 @@ function checkPlayerInvincibility() {
 // ─── ENEMY AI — Fixed BFS + Anti-Stuck + No Overlap ─
 function moveEnemies() {
   if (!st.running || st.quizOpen) return;
+  if (st.freezeActive) {
+    console.log("🤖 [AI FREEZE] Enemies are frozen! Skipping moveEnemies() execution.");
+    return;
+  }
   if (isMultiplayer && !isHost) return; // Guest AI calculations bypassed, fully sync from Host
   const dirs = [[-1, 0], [1, 0], [0, -1], [0, 1]];
 
@@ -1693,6 +1710,15 @@ function bfsToPlayer(enemy) {
 
 function checkPlayerEnemyCollision() {
   if (!st.player.alive || st.player.invincible) return;
+  if (st.freezeActive) {
+    // Proactively log at most once in a while or when overlapping, but let's just log when player overlaps or generally
+    const { row, col } = st.player;
+    const isOverlapping = st.enemies.some(e => e.alive && e.row === row && e.col === col);
+    if (isOverlapping) {
+      console.log("🛡️ [COLLISION BYPASS] Player touched an enemy but is safe because FREEZE is active!");
+    }
+    return;
+  }
   const { row, col } = st.player;
   let hit = false;
   st.enemies.forEach(e => {
@@ -3553,6 +3579,13 @@ function handleMultiplayerPacket(data) {
   else if (data.type === 'PICKUP') {
     st.powerups = st.powerups.filter(p => !(p.row === data.row && p.col === data.col));
     if (st.grid[data.row]) st.grid[data.row][data.col] = T_EMPTY;
+  }
+  else if (data.type === 'FREEZE_ACTIVE') {
+    st.freezeActive = true;
+    st.freezeUntil = Date.now() + (data.duration || FREEZE_DUR);
+    const r = opponentState.row, c = opponentState.col;
+    showPopup('❄️ FREEZE!', c, r, '#64d8ff');
+    SoundEngine.playPickup();
   }
   // Bug fix: GRID_UPDATE sekarang juga update powerups array
   else if (data.type === 'GRID_UPDATE') {
